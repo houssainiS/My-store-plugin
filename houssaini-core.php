@@ -14,6 +14,7 @@ define( 'HC_VERSION', '0.2.0' );
 
 require_once plugin_dir_path( __FILE__ ) . 'categories.php';
 require_once plugin_dir_path( __FILE__ ) . 'featured.php';
+require_once plugin_dir_path( __FILE__ ) . 'sections.php';
 
 /* Hide Hello Elementor's automatic page title on the front page and on any page built with Elementor */
 add_filter( 'hello_elementor_page_title', function ( $show ) {
@@ -51,6 +52,7 @@ function hc_img( $key ) {
 		'keyboard'   => array( 'keyboard' ),
 		'promo_bg'   => array( 'limite-time', 'limited-time', 'time-card' ),
 		'gpu'        => array( 'graphic-card', 'graphic_card', 'graphiccard', 'gpu' ),
+		'wide_bg'    => array( 'under-category-card', 'under-category', 'under_category' ),
 	);
 
 	$url = get_transient( 'hc_img_' . $key );
@@ -307,7 +309,7 @@ add_action( 'wp_footer', function () {
 	if ( ! current_user_can( 'manage_options' ) ) {
 		return;
 	}
-	$keys = array( 'hero_bg', 'ps5', 'laptop', 'iphone', 'watch', 'earbuds', 'mouse', 'headphones', 'keyboard', 'promo_bg', 'gpu' );
+	$keys = array( 'hero_bg', 'ps5', 'laptop', 'iphone', 'watch', 'earbuds', 'mouse', 'headphones', 'keyboard', 'promo_bg', 'gpu', 'wide_bg' );
 	echo "\n<!-- hc-debug (admins only)\n";
 	foreach ( $keys as $k ) {
 		echo $k . ' => ' . ( hc_img( $k ) ? hc_img( $k ) : 'NOT FOUND' ) . "\n";
@@ -493,11 +495,11 @@ html[dir="rtl"] .hc-prod img{ transform:translateX(-70px) scale(.92); }
 	.hc-shade{ background:linear-gradient(to bottom, #f4f4f6 0%, #f4f4f6 48%, rgba(244,244,246,0) 72%); }
 	.hc-copy{ inset-inline-start:0; inset-inline-end:0; top:34px; transform:none; width:auto; padding-inline:60px 22px; }
 	.hc-title{ font-size:clamp(38px,11vw,60px); }
-	.hc-prod{ inset-block:auto 70px; inset-inline:0; width:100%; height:42%; }
-	.hc-price{ top:auto; bottom:70px; inset-inline-end:14px; gap:16px; padding:10px 12px 10px 16px; }
+	.hc-prod{ inset-block:auto calc(70px + var(--hc-over,0px)); inset-inline:0; width:100%; height:42%; }
+	.hc-price{ top:auto; bottom:calc(70px + var(--hc-over,0px)); inset-inline-end:14px; gap:16px; padding:10px 12px 10px 16px; }
 	.hc-price i{ width:38px; height:38px; }
 	.hc-idx{ transform:translateY(-110%); top:38%; gap:12px; }
-	.hc-ctrl{ bottom:16px; }
+	.hc-ctrl{ bottom:calc(16px + var(--hc-over,0px)); }
 }
 @media (prefers-reduced-motion:reduce){
 	.hc-slide.is-active .hc-prod img{ animation:none; }

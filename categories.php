@@ -70,8 +70,18 @@ add_shortcode( 'houssaini_categories', function ( $atts ) {
 	ob_start();
 	?>
 	<style id="hc-cats-css">
-	.hc-cats{ padding:22px clamp(16px,2.4vw,42px) 6px; font-family:var(--hc-body,'Inter',sans-serif); }
-	.hc-cats-grid{ max-width:1680px; margin:0 auto; display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:15px; }
+	.hc-cats{ padding:clamp(30px,3.5vw,56px) clamp(16px,2.4vw,42px) 6px; font-family:var(--hc-body,'Inter',sans-serif); }
+	.hc-cats-in{ max-width:1680px; margin:0 auto; }
+	.hc-cats-head{ display:flex; align-items:flex-end; justify-content:space-between; gap:20px; margin-bottom:22px; }
+	.hc-cats-eyebrow{ display:flex; align-items:center; gap:14px; color:#e4161c; font:600 13px var(--hc-body); letter-spacing:.06em; text-transform:uppercase; margin-bottom:8px; }
+	.hc-cats-eyebrow::before{ content:""; width:50px; height:3px; background:#e4161c; }
+	.hc-cats-title{ margin:0; color:#111114; font:800 clamp(26px,2.3vw,36px)/1.1 var(--hc-body); letter-spacing:-.01em; }
+	.hc-cats-all{ display:inline-flex; align-items:center; gap:8px; color:#e4161c !important; font:600 15px var(--hc-body); text-decoration:none !important; white-space:nowrap; }
+	.hc-cats-all svg{ width:16px; height:16px; transition:transform .25s; }
+	.hc-cats-all:hover svg{ transform:translateX(4px); }
+	html[dir="rtl"] .hc-cats-all:hover svg{ transform:scaleX(-1) translateX(4px); }
+	@media (max-width:640px){ .hc-cats-head{ flex-direction:column; align-items:flex-start; gap:10px; } }
+	.hc-cats-grid{ display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:15px; }
 	.hc-cat{ position:relative; display:flex; align-items:center; gap:14px; min-height:98px; padding:12px 18px; background:#f3f3f5; border:1px solid transparent; border-radius:14px; text-decoration:none !important; color:#111114 !important; overflow:hidden; transition:transform .3s cubic-bezier(.2,.7,.2,1), box-shadow .3s, background .3s, border-color .3s; }
 	.hc-cat::after{ content:""; position:absolute; inset-inline:0; bottom:0; height:3px; background:#e4161c; transform:scaleX(0); transform-origin:left; transition:transform .35s; }
 	html[dir="rtl"] .hc-cat::after{ transform-origin:right; }
@@ -95,6 +105,14 @@ add_shortcode( 'houssaini_categories', function ( $atts ) {
 	}
 	</style>
 	<section class="hc-cats">
+		<div class="hc-cats-in">
+		<div class="hc-cats-head">
+			<div>
+				<span class="hc-cats-eyebrow"><?php esc_html_e( 'Shop by Category', 'houssaini-core' ); ?></span>
+				<h2 class="hc-cats-title"><?php esc_html_e( 'Explore Our Categories', 'houssaini-core' ); ?></h2>
+			</div>
+			<a class="hc-cats-all" href="<?php echo esc_url( function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' ) ); ?>"><?php esc_html_e( 'View All Categories', 'houssaini-core' ); ?> <?php echo hc_icon( 'arrow' ); ?></a>
+		</div>
 		<div class="hc-cats-grid">
 			<?php foreach ( $cards as $card ) : ?>
 				<a class="hc-cat" href="<?php echo esc_url( $card['link'] ); ?>">
@@ -105,6 +123,7 @@ add_shortcode( 'houssaini_categories', function ( $atts ) {
 					</span>
 				</a>
 			<?php endforeach; ?>
+		</div>
 		</div>
 	</section>
 	<?php
