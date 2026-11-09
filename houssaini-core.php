@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'HC_VERSION', '0.2.0' );
 
 require_once plugin_dir_path( __FILE__ ) . 'categories.php';
+require_once plugin_dir_path( __FILE__ ) . 'featured.php';
 
 /* Hide Hello Elementor's automatic page title on the front page and on any page built with Elementor */
 add_filter( 'hello_elementor_page_title', function ( $show ) {
@@ -48,6 +49,8 @@ function hc_img( $key ) {
 		'mouse'      => array( 'mouse' ),
 		'headphones' => array( 'headphone', 'soundcore' ),
 		'keyboard'   => array( 'keyboard' ),
+		'promo_bg'   => array( 'limite-time', 'limited-time', 'time-card' ),
+		'gpu'        => array( 'graphic-card', 'graphic_card', 'graphiccard', 'gpu' ),
 	);
 
 	$url = get_transient( 'hc_img_' . $key );
@@ -190,7 +193,7 @@ add_action( 'wp_body_open', function () {
 
 				<div class="hc-icons">
 					<a href="<?php echo esc_url( $account ); ?>" aria-label="<?php esc_attr_e( 'My account', 'houssaini-core' ); ?>"><?php echo hc_icon( 'user' ); ?></a>
-					<a href="<?php echo esc_url( $wish ); ?>" aria-label="<?php esc_attr_e( 'Wishlist', 'houssaini-core' ); ?>"><?php echo hc_icon( 'heart' ); ?><span class="hc-badge">0</span></a>
+					<a href="<?php echo esc_url( $wish ); ?>" aria-label="<?php esc_attr_e( 'Wishlist', 'houssaini-core' ); ?>"><?php echo hc_icon( 'heart' ); ?><span class="hc-badge hc-wish-count">0</span></a>
 					<a href="<?php echo esc_url( $cart ); ?>" aria-label="<?php esc_attr_e( 'Cart', 'houssaini-core' ); ?>"><?php echo hc_icon( 'cart' ); ?><?php echo hc_cart_count_html(); ?></a>
 				</div>
 				</div>
@@ -304,7 +307,7 @@ add_action( 'wp_footer', function () {
 	if ( ! current_user_can( 'manage_options' ) ) {
 		return;
 	}
-	$keys = array( 'hero_bg', 'ps5', 'laptop', 'iphone', 'watch', 'earbuds', 'mouse', 'headphones', 'keyboard' );
+	$keys = array( 'hero_bg', 'ps5', 'laptop', 'iphone', 'watch', 'earbuds', 'mouse', 'headphones', 'keyboard', 'promo_bg', 'gpu' );
 	echo "\n<!-- hc-debug (admins only)\n";
 	foreach ( $keys as $k ) {
 		echo $k . ' => ' . ( hc_img( $k ) ? hc_img( $k ) : 'NOT FOUND' ) . "\n";
