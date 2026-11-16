@@ -15,6 +15,7 @@ define( 'HC_VERSION', '0.2.0' );
 require_once plugin_dir_path( __FILE__ ) . 'categories.php';
 require_once plugin_dir_path( __FILE__ ) . 'featured.php';
 require_once plugin_dir_path( __FILE__ ) . 'sections.php';
+require_once plugin_dir_path( __FILE__ ) . 'footer.php';
 
 /* Hide Hello Elementor's automatic page title on the front page and on any page built with Elementor */
 add_filter( 'hello_elementor_page_title', function ( $show ) {
