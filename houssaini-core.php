@@ -16,6 +16,7 @@ require_once plugin_dir_path( __FILE__ ) . 'categories.php';
 require_once plugin_dir_path( __FILE__ ) . 'featured.php';
 require_once plugin_dir_path( __FILE__ ) . 'sections.php';
 require_once plugin_dir_path( __FILE__ ) . 'footer.php';
+require_once plugin_dir_path( __FILE__ ) . 'shop.php';
 
 /* Hide Hello Elementor's automatic page title on the front page and on any page built with Elementor */
 add_filter( 'hello_elementor_page_title', function ( $show ) {
@@ -54,6 +55,7 @@ function hc_img( $key ) {
 		'promo_bg'   => array( 'limite-time', 'limited-time', 'time-card' ),
 		'gpu'        => array( 'graphic-card', 'graphic_card', 'graphiccard', 'gpu' ),
 		'wide_bg'    => array( 'under-category-card', 'under-category', 'under_category' ),
+		'shop_bar'   => array( 'shop-bar', 'shop_bar', 'shopbar' ),
 	);
 
 	$url = get_transient( 'hc_img_' . $key );
@@ -310,7 +312,7 @@ add_action( 'wp_footer', function () {
 	if ( ! current_user_can( 'manage_options' ) ) {
 		return;
 	}
-	$keys = array( 'hero_bg', 'ps5', 'laptop', 'iphone', 'watch', 'earbuds', 'mouse', 'headphones', 'keyboard', 'promo_bg', 'gpu', 'wide_bg' );
+	$keys = array( 'hero_bg', 'ps5', 'laptop', 'iphone', 'watch', 'earbuds', 'mouse', 'headphones', 'keyboard', 'promo_bg', 'gpu', 'wide_bg', 'shop_bar' );
 	echo "\n<!-- hc-debug (admins only)\n";
 	foreach ( $keys as $k ) {
 		echo $k . ' => ' . ( hc_img( $k ) ? hc_img( $k ) : 'NOT FOUND' ) . "\n";
