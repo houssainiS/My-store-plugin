@@ -17,6 +17,8 @@ require_once plugin_dir_path( __FILE__ ) . 'featured.php';
 require_once plugin_dir_path( __FILE__ ) . 'sections.php';
 require_once plugin_dir_path( __FILE__ ) . 'footer.php';
 require_once plugin_dir_path( __FILE__ ) . 'shop.php';
+require_once plugin_dir_path( __FILE__ ) . 'product.php';
+require_once plugin_dir_path( __FILE__ ) . 'buttons.php';
 
 /* Hide Hello Elementor's automatic page title on the front page and on any page built with Elementor */
 add_filter( 'hello_elementor_page_title', function ( $show ) {
@@ -56,6 +58,7 @@ function hc_img( $key ) {
 		'gpu'        => array( 'graphic-card', 'graphic_card', 'graphiccard', 'gpu' ),
 		'wide_bg'    => array( 'under-category-card', 'under-category', 'under_category' ),
 		'shop_bar'   => array( 'shop-bar', 'shop_bar', 'shopbar' ),
+		'product_banner' => array( 'product-banner', 'product_banner', 'productbanner' ),
 	);
 
 	$url = get_transient( 'hc_img_' . $key );
@@ -66,7 +69,9 @@ function hc_img( $key ) {
 		foreach ( isset( $keywords[ $key ] ) ? $keywords[ $key ] : array() as $kw ) {
 			$id = $wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT ID FROM {$wpdb->posts} WHERE post_type = 'attachment' AND post_mime_type LIKE 'image/%%' AND guid LIKE %s ORDER BY ID DESC LIMIT 1",
+					"SELECT p.ID FROM {$wpdb->posts} p LEFT JOIN {$wpdb->postmeta} m ON ( m.post_id = p.ID AND m.meta_key = '_wp_attached_file' ) WHERE p.post_type = 'attachment' AND p.post_mime_type LIKE 'image/%%' AND ( p.guid LIKE %s OR m.meta_value LIKE %s OR p.post_name LIKE %s ) ORDER BY p.ID DESC LIMIT 1",
+					'%' . $wpdb->esc_like( $kw ) . '%',
+					'%' . $wpdb->esc_like( $kw ) . '%',
 					'%' . $wpdb->esc_like( $kw ) . '%'
 				)
 			);
@@ -312,7 +317,7 @@ add_action( 'wp_footer', function () {
 	if ( ! current_user_can( 'manage_options' ) ) {
 		return;
 	}
-	$keys = array( 'hero_bg', 'ps5', 'laptop', 'iphone', 'watch', 'earbuds', 'mouse', 'headphones', 'keyboard', 'promo_bg', 'gpu', 'wide_bg', 'shop_bar' );
+	$keys = array( 'hero_bg', 'ps5', 'laptop', 'iphone', 'watch', 'earbuds', 'mouse', 'headphones', 'keyboard', 'promo_bg', 'gpu', 'wide_bg', 'shop_bar', 'product_banner' );
 	echo "\n<!-- hc-debug (admins only)\n";
 	foreach ( $keys as $k ) {
 		echo $k . ' => ' . ( hc_img( $k ) ? hc_img( $k ) : 'NOT FOUND' ) . "\n";
