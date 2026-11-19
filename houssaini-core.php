@@ -130,15 +130,25 @@ add_action( 'wp_enqueue_scripts', function () {
  * 3. Header (announcement bar + main bar)
  * ---------------------------------------------------------------- */
 
+/** True when the page you are on is the given address or one of its sub-pages. */
+function hc_url_is_current( $url ) {
+	global $wp;
+	$target = trailingslashit( (string) wp_parse_url( $url, PHP_URL_PATH ) );
+	$now    = trailingslashit( (string) wp_parse_url( home_url( $wp->request ), PHP_URL_PATH ) );
+	return '/' !== $target && 0 === strpos( $now, $target );
+}
+
 function hc_fallback_menu() {
 	$shop = hc_woo_active() ? wc_get_page_permalink( 'shop' ) : home_url( '/shop/' );
 	echo '<ul class="hc-menu">';
-	echo '<li class="current"><a href="' . esc_url( home_url( '/' ) ) . '">' . esc_html__( 'Home', 'houssaini-core' ) . '</a></li>';
-	echo '<li class="has-sub"><a href="' . esc_url( $shop ) . '">' . esc_html__( 'Shop', 'houssaini-core' ) . hc_icon( 'chevron' ) . '</a>';
-	echo '<ul class="sub"><li><a href="' . esc_url( $shop ) . '">' . esc_html__( 'All Products', 'houssaini-core' ) . '</a></li></ul></li>';
-
+	// which menu item matches the page you are on
+	$cur_shop = hc_woo_active() && ( is_shop() || is_product() || is_product_tag() || is_product_category() );
+	$cur_cat  = false; // "Categories" goes to the shop page, so only "Shop" is highlighted
+	echo '<li class="' . ( ( is_front_page() || is_home() ) ? 'current' : '' ) . '"><a href="' . esc_url( home_url( '/' ) ) . '">' . esc_html__( 'Home', 'houssaini-core' ) . '</a></li>';
+	echo '<li class="' . ( $cur_shop ? 'current' : '' ) . '"><a href="' . esc_url( $shop ) . '">' . esc_html__( 'Shop', 'houssaini-core' ) . '</a></li>';
+	
 	$terms = taxonomy_exists( 'product_cat' ) ? get_terms( array( 'taxonomy' => 'product_cat', 'hide_empty' => false, 'parent' => 0, 'exclude' => array( (int) get_option( 'default_product_cat' ) ) ) ) : array();
-	echo '<li class="has-sub"><a href="' . esc_url( $shop ) . '">' . esc_html__( 'Categories', 'houssaini-core' ) . hc_icon( 'chevron' ) . '</a><ul class="sub">';
+	echo '<li class="has-sub' . ( $cur_cat ? ' current' : '' ) . '"><a href="' . esc_url( $shop ) . '">' . esc_html__( 'Categories', 'houssaini-core' ) . hc_icon( 'chevron' ) . '</a><ul class="sub">';
 	if ( ! is_wp_error( $terms ) && $terms ) {
 		foreach ( $terms as $t ) {
 			echo '<li><a href="' . esc_url( get_term_link( $t ) ) . '">' . esc_html( $t->name ) . '</a></li>';
@@ -147,8 +157,8 @@ function hc_fallback_menu() {
 		echo '<li><a href="' . esc_url( $shop ) . '">' . esc_html__( 'Add product categories', 'houssaini-core' ) . '</a></li>';
 	}
 	echo '</ul></li>';
-	echo '<li><a href="' . esc_url( home_url( '/about/' ) ) . '">' . esc_html__( 'About', 'houssaini-core' ) . '</a></li>';
-	echo '<li><a href="' . esc_url( home_url( '/contact/' ) ) . '">' . esc_html__( 'Contact', 'houssaini-core' ) . '</a></li>';
+	echo '<li class="' . ( ( is_page( array( 'about', 'about-us' ) ) || hc_url_is_current( home_url( '/about/' ) ) ) ? 'current' : '' ) . '"><a href="' . esc_url( home_url( '/about/' ) ) . '">' . esc_html__( 'About', 'houssaini-core' ) . '</a></li>';
+	echo '<li class="' . ( ( is_page( array( 'contact', 'contact-us' ) ) || hc_url_is_current( home_url( '/contact/' ) ) ) ? 'current' : '' ) . '"><a href="' . esc_url( home_url( '/contact/' ) ) . '">' . esc_html__( 'Contact', 'houssaini-core' ) . '</a></li>';
 	echo '</ul>';
 }
 
@@ -391,8 +401,8 @@ body:has(.hc-hero) .hc-main:not(.is-scrolled) .hc-icons a:hover{ color:var(--hc-
 .hc-menu > li{ position:relative; }
 .hc-menu > li > a{ display:flex; align-items:center; gap:6px; padding:11px 20px; border-radius:999px; font-weight:600; font-size:15px; transition:.2s; }
 .hc-menu > li > a svg{ width:14px; height:14px; transition:.2s; }
-.hc-menu > li.current > a, .hc-menu > li.current-menu-item > a{ background:var(--hc-red); color:#fff; }
-.hc-menu > li:not(.current):hover > a{ color:var(--hc-red); }
+.hc-menu > li.current > a, .hc-menu > li.current-menu-item > a, .hc-menu > li.current-menu-ancestor > a, .hc-menu > li.current-menu-parent > a{ background:var(--hc-red); color:#fff; }
+.hc-menu > li:not(.current):not(.current-menu-item):not(.current-menu-ancestor):not(.current-menu-parent):hover > a{ color:var(--hc-red); }
 .hc-menu > li:hover > a svg{ transform:rotate(180deg); }
 .hc-menu .sub, .hc-menu .sub-menu{ position:absolute; inset-inline-start:0; top:100%; min-width:220px; background:#fff; border:1px solid var(--hc-line); border-radius:14px; padding:8px; box-shadow:0 18px 40px rgba(0,0,0,.12); opacity:0; visibility:hidden; transform:translateY(8px); transition:.2s; }
 .hc-menu li:hover > .sub, .hc-menu li:hover > .sub-menu{ opacity:1; visibility:visible; transform:none; }
